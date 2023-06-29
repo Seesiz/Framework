@@ -16,8 +16,12 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import etu1932.framework.*;
+
 
 public class FrontServlet extends HttpServlet{
+    HashMap<String, Mapping> MappingUrls = new HashMap<>();
+
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException{
         res.setContentType("text/plain");
         PrintWriter out = res.getWriter();
