@@ -22,7 +22,6 @@ public class FrontServlet extends HttpServlet{
         res.setContentType("text/plain");
         PrintWriter out = res.getWriter();
         out.println(req.getRequestURL());
-        out.println(UrlMapping);
         processRequest(req, res);
     }
 
@@ -31,5 +30,8 @@ public class FrontServlet extends HttpServlet{
         PrintWriter out = res.getWriter();
         out.println(req.getRequestURL());
         processRequest(req, res);
+    }
+
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)throws IOException, ServletException {
     }
 }
