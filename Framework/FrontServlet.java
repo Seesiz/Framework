@@ -90,7 +90,7 @@ public class FrontServlet extends HttpServlet{
                 for(Map.Entry<String, Object> entry : mv.getData().entrySet()){
                     req.setAttribute(entry.getKey(), entry.getValue());
                 }
-                RequestDispatcher rd = req.getRequestDispatcher(mv.getUrl());
+                RequestDispatcher rd = req.getRequestDispatcher("./WEB-INF/jsp/"+mv.getUrl());
                 rd.forward(req, res);
             }catch(Exception e){
                 e.printStackTrace(out);
