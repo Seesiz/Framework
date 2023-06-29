@@ -8,12 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.*;
 import java.lang.reflect.Field;
-
-import java.io.*;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
 
 import etu1932.framework.*;
@@ -71,6 +68,36 @@ public class FrontServlet extends HttpServlet{
     }
 
 
-    public void processRequest(HttpServletRequest request, HttpServletResponse response)throws IOException, ServletException {
+    public void processRequest(HttpServletRequest req, HttpServletResponse res)throws IOException, ServletException {
+        PrintWriter out = res.getWriter();
+        String base_url = req.getRequestURL();
+        base_url=base_url.substring(req.getContextPath().length()+1);
+        if(MappingUrls.containsKey(base_url)){
+            Mapping map = MappingUrls.get(base_url);
+            String methodName = map.getMethod();
+            try{
+                boolean found = false;
+                Class<?> myClass = Class.forName(map.getClassName());
+                Object ob = myClass.getConstructor().newInstance();
+                Method method = null;
+                Method[] methods = myClass.getDeclaredMethods();
+                for (Method m : methods) {
+                    if(m.getName().equals(methodName) && m.isAnnotationPresent(Url.class)){
+                        method = m;
+                        found = true;
+                        break;
+                    }
+                }
+                if(found){
+                    ModelView mv = method.invoke(ob, methods);
+                    RequestDispatcher rd = req.getRequestDispatcher(mv.getUrl());
+                    rd.forward(req, res);
+                } else {
+                    throw new Exception("Error 404: Page not found!!");
+                }
+            }catch(Exception e){
+                e.printStackTrace(out);
+            }
+        }
     }
 }
