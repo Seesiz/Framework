@@ -7,6 +7,6 @@ public class Emp {
 
     @Url(key="Emp-find")
     public ModelView find(){
-        return new ModelView("Index.jsp");
+        return new ModelView("Emp.jsp");
     }
 }

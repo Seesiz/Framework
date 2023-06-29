@@ -70,7 +70,7 @@ public class FrontServlet extends HttpServlet{
 
     public void processRequest(HttpServletRequest req, HttpServletResponse res)throws IOException, ServletException {
         PrintWriter out = res.getWriter();
-        String base_url = req.getRequestURL();
+        String base_url = req.getRequestURI();
         base_url=base_url.substring(req.getContextPath().length()+1);
         if(MappingUrls.containsKey(base_url)){
             Mapping map = MappingUrls.get(base_url);
@@ -89,7 +89,7 @@ public class FrontServlet extends HttpServlet{
                     }
                 }
                 if(found){
-                    ModelView mv = method.invoke(ob, methods);
+                    ModelView mv = (ModelView) method.invoke(ob);
                     RequestDispatcher rd = req.getRequestDispatcher(mv.getUrl());
                     rd.forward(req, res);
                 } else {
