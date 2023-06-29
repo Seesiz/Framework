@@ -7,5 +7,6 @@
 </head>
 <body>
     Salama tompoko
+    <h1>Nom: <%=request.getAttribute("Nom") %></h1>
 </body>
 </html>

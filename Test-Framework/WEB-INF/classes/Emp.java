@@ -7,6 +7,10 @@ public class Emp {
 
     @Url(key="Emp-find")
     public ModelView find(){
-        return new ModelView("Emp.jsp");
+        ModelView mv = new ModelView("Emp.jsp");
+        mv.addItem("Nom", "ANDRIAMPARANY");
+        mv.addItem("Prenom", "Ny Aro");
+        mv.addItem("Statut", "Etudiant");
+        return mv;
     }
 }
