@@ -70,13 +70,12 @@ public class FrontServlet extends HttpServlet{
 
     public void processRequest(HttpServletRequest req, HttpServletResponse res)throws IOException, ServletException {
         PrintWriter out = res.getWriter();
-        String base_url = req.getRequestURL();
+        String base_url = req.getRequestURI();
         base_url=base_url.substring(req.getContextPath().length()+1);
         if(MappingUrls.containsKey(base_url)){
             Mapping map = MappingUrls.get(base_url);
             String methodName = map.getMethod();
             try{
-                boolean found = false;
                 Class<?> myClass = Class.forName(map.getClassName());
                 Object ob = myClass.getConstructor().newInstance();
                 Method method = null;
@@ -84,17 +83,15 @@ public class FrontServlet extends HttpServlet{
                 for (Method m : methods) {
                     if(m.getName().equals(methodName) && m.isAnnotationPresent(Url.class)){
                         method = m;
-                        found = true;
                         break;
                     }
                 }
-                if(found){
-                    ModelView mv = method.invoke(ob, methods);
-                    RequestDispatcher rd = req.getRequestDispatcher(mv.getUrl());
-                    rd.forward(req, res);
-                } else {
-                    throw new Exception("Error 404: Page not found!!");
+                ModelView mv = (ModelView) method.invoke(ob);
+                for(Map.Entry<String, Object> entry : mv.getData().entrySet()){
+                    req.setAttribute(entry.getKey(), entry.getValue());
                 }
+                RequestDispatcher rd = req.getRequestDispatcher(mv.getUrl());
+                rd.forward(req, res);
             }catch(Exception e){
                 e.printStackTrace(out);
             }
