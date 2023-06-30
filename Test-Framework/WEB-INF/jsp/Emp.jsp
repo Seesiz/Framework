@@ -6,7 +6,11 @@
     <title>Document</title>
 </head>
 <body>
-    Salama tompoko
-    <h1>Nom: <%=request.getAttribute("Nom") %></h1>
+    <form action="" method="get">
+        Salama tompoko
+        <input type="text" name="nom">
+        <input type="text" name="prenom">
+        <input type="submit" value="valider">
+    </form>
 </body>
 </html>
