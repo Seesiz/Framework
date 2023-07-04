@@ -3,15 +3,11 @@ package etu1932.framework.servlet;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.net.URL;
-import java.util.Map;
 
 import etu1932.framework.*;
 import etu1932.annotation.*;
@@ -85,6 +81,11 @@ public class FrontServlet extends HttpServlet{
                         method = m;
                         break;
                     }
+                }
+                Parameter[] parameters = method.getParameters();
+                List<String> allparametre = Collections.list(req.getParameterNames());
+                for (Parameter parameter : parameters) {
+                    parameter.getName();
                 }
                 ModelView mv = (ModelView) method.invoke(ob);
                 for(Map.Entry<String, Object> entry : mv.getData().entrySet()){
