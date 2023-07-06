@@ -6,7 +6,7 @@
     <title>Document</title>
 </head>
 <body>
-    Nom: <%= request.getParameter("nom");%>
-    Prenom: <%= request.getParameter("prenom");%>
+    Nom: <% out.println(request.getParameter("nom"));%>
+    Prenom: <% out.println(request.getParameter("prenom"));%>
 </body>
 </html>

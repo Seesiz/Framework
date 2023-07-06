@@ -87,7 +87,7 @@ public class FrontServlet extends HttpServlet{
                 Field[] allFields = myClass.getDeclaredFields();
                 for(Field f : allFields){
                     for(String parameter : allparametre){
-                        if(f.getName() == parameter){
+                        if(f.getName().equals(parameter)){
                             String attributeName = parameter.substring(0, 1).toUpperCase() + parameter.substring(1, parameter.length());
                             Method m = myClass.getDeclaredMethod("set"+attributeName, f.getType());
                             String value = req.getParameter(parameter);
@@ -100,7 +100,7 @@ public class FrontServlet extends HttpServlet{
                                 valTemp = Double.parseDouble(value);
                             }else if(f.getType() == Boolean.class){
                                 valTemp = Boolean.parseBoolean(value);
-                            }else if(f.getType() == Date.class){//sql.date
+                            }else if(f.getType() == Date.class){
                                valTemp = java.sql.Date.valueOf(value);
                             }else{
                                 valTemp = f.getType().getConstructor(String.class).newInstance(value);
@@ -110,12 +110,10 @@ public class FrontServlet extends HttpServlet{
                         }
                     }
                 }
-                for (Parameter parameter : parameters) {
-                    parameter.getName();
-                }
                 ModelView mv = (ModelView) method.invoke(ob);
                 for(Map.Entry<String, Object> entry : mv.getData().entrySet()){
                     req.setAttribute(entry.getKey(), entry.getValue());
+                    System.out.println(entry.getKey()+":"+entry.getValue());
                 }
                 RequestDispatcher rd = req.getRequestDispatcher("./WEB-INF/jsp/"+mv.getUrl());
                 rd.forward(req, res);
