@@ -8,6 +8,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.net.URL;
+import java.text.AttributedCharacterIterator.Attribute;
 
 import etu1932.framework.*;
 import etu1932.annotation.*;
@@ -107,6 +108,33 @@ public class FrontServlet extends HttpServlet{
                             }
                             m.invoke(ob, valTemp);
                             break;
+                        }
+                    }
+                }
+                Parameter[] allParam = m.getParameters();
+                Object[] obj =new Object[allParam.length];
+                for (int i = 0; i < allParam.length; i++) {
+                    Parameter p = allParam[i];
+                    if(p.isAnnotationPresent(Param.class)){
+                        Param param = p.getAnnotation(Param.class);
+                        for (String inparam : allparametre) {
+                            if(param.key().equals(inparam)){
+                                String value = request.getParameter(inparam);
+                                Object valTemp = value;
+                                if(p.getType() == Integer.class){
+                                    valTemp = Integer.parseInt(String.valueOf(value));
+                                }else if(p.getType() == String.class){
+                                    valTemp = value;
+                                }else if(p.getType() == Double.class){
+                                    valTemp = Double.parseDouble(value);
+                                }else if(p.getType() == Boolean.class){
+                                    valTemp = Boolean.parseBoolean(value);
+                                }else if(p.getType() == Date.class){//sql.date
+                                   valTemp = java.sql.Date.valueOf(value);
+                                }
+                                obj[i]= valTemp;
+                                break;
+                            }
                         }
                     }
                 }
