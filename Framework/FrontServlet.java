@@ -84,6 +84,32 @@ public class FrontServlet extends HttpServlet{
                 }
                 Parameter[] parameters = method.getParameters();
                 List<String> allparametre = Collections.list(req.getParameterNames());
+                Field[] allFields = myClass.getDeclaredFields();
+                for(Field f : allFields){
+                    for(String parameter : allparametre){
+                        if(f.getName() == parameter){
+                            String attributeName = parameter.substring(0, 1).toUpperCase() + parameter.substring(1, parameter.length());
+                            Method m = myClass.getDeclaredMethod("set"+attributeName, f.getType());
+                            String value = req.getParameter(parameter);
+                            Object valTemp = value;
+                            if(f.getType() == Integer.class){
+                                valTemp = Integer.parseInt(String.valueOf(value));
+                            }else if(f.getType() == String.class){
+                                valTemp = value;
+                            }else if(f.getType() == Double.class){
+                                valTemp = Double.parseDouble(value);
+                            }else if(f.getType() == Boolean.class){
+                                valTemp = Boolean.parseBoolean(value);
+                            }else if(f.getType() == Date.class){//sql.date
+                               valTemp = java.sql.Date.valueOf(value);
+                            }else{
+                                valTemp = f.getType().getConstructor(String.class).newInstance(value);
+                            }
+                            m.invoke(ob, valTemp);
+                            break;
+                        }
+                    }
+                }
                 for (Parameter parameter : parameters) {
                     parameter.getName();
                 }
