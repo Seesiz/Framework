@@ -138,13 +138,16 @@ public class FrontServlet extends HttpServlet{
                         }
                     }
                 }
-                ModelView mv = (ModelView) method.invoke(ob, obj);
-                for(Map.Entry<String, Object> entry : mv.getData().entrySet()){
-                    req.setAttribute(entry.getKey(), entry.getValue());
-                    System.out.println(entry.getKey()+":"+entry.getValue());
+                Object object = method.invoke(ob, obj);
+                if(object instanceof ModelView){
+                    ModelView mv = (ModelView) object;
+                    for(Map.Entry<String, Object> entry : mv.getData().entrySet()){
+                        req.setAttribute(entry.getKey(), entry.getValue());
+                        System.out.println(entry.getKey()+":"+entry.getValue());
+                    }
+                    RequestDispatcher rd = req.getRequestDispatcher("./WEB-INF/jsp/"+mv.getUrl());
+                    rd.forward(req, res);
                 }
-                RequestDispatcher rd = req.getRequestDispatcher("./WEB-INF/jsp/"+mv.getUrl());
-                rd.forward(req, res);
             }catch(Exception e){
                 e.printStackTrace(out);
             }
