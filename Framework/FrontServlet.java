@@ -8,7 +8,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.net.URL;
-import java.text.AttributedCharacterIterator.Attribute;
+import javax.swing.GroupLayout.SequentialGroup;
+
 
 import etu1932.framework.*;
 import etu1932.annotation.*;
@@ -33,7 +34,7 @@ public class FrontServlet extends HttpServlet{
 
     public void init() throws ServletException{
         try{
-            getAllFile();            
+            getAllFile();
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -43,7 +44,6 @@ public class FrontServlet extends HttpServlet{
         String packageName = "etu1932.model";
         URL root = Thread.currentThread().getContextClassLoader().getResource(packageName.replaceAll("[.]", "\\\\"));
         File packDir = new File(root.toURI());
-        System.out.println(root.toURI());
         File[] inside = packDir.listFiles(file->file.getName().endsWith(".class"));
         List<Class> lists = new ArrayList<>();
         for (File f : inside) {
@@ -102,7 +102,9 @@ public class FrontServlet extends HttpServlet{
                             }else if(f.getType() == Boolean.class){
                                 valTemp = Boolean.parseBoolean(value);
                             }else if(f.getType() == Date.class){
-                               valTemp = java.sql.Date.valueOf(value);
+                                valTemp = java.sql.Date.valueOf(value);
+                            }else if(f.getType()==Upload.class){
+                                valTemp = fileTraitement(req.getParts(), f);
                             }else{
                                 valTemp = f.getType().getConstructor(String.class).newInstance(value);
                             }
@@ -129,7 +131,7 @@ public class FrontServlet extends HttpServlet{
                                     valTemp = Double.parseDouble(value);
                                 }else if(p.getType() == Boolean.class){
                                     valTemp = Boolean.parseBoolean(value);
-                                }else if(p.getType() == Date.class){//sql.date
+                                }else if(p.getType() == Date.class){
                                    valTemp = java.sql.Date.valueOf(value);
                                 }
                                 obj[i]= valTemp;
@@ -143,7 +145,6 @@ public class FrontServlet extends HttpServlet{
                     ModelView mv = (ModelView) object;
                     for(Map.Entry<String, Object> entry : mv.getData().entrySet()){
                         req.setAttribute(entry.getKey(), entry.getValue());
-                        System.out.println(entry.getKey()+":"+entry.getValue());
                     }
                     RequestDispatcher rd = req.getRequestDispatcher("./WEB-INF/jsp/"+mv.getUrl());
                     rd.forward(req, res);
@@ -152,5 +153,48 @@ public class FrontServlet extends HttpServlet{
                 e.printStackTrace(out);
             }
         }
+    }
+
+    private String getFileName(jakarta.servlet.http.Part part) {
+        String contentDisposition = part.getHeader("content-disposition");
+        String[] parts = contentDisposition.split(";");
+        for (String partStr : parts) {
+            if (partStr.trim().startsWith("filename"))
+                return partStr.substring(partStr.indexOf('=') + 1).trim().replace("\"", "");
+        }
+        return null;
+    }
+
+    private Upload fillFileUpload(Upload file, jakarta.servlet.http.Part filepart) {
+        try (InputStream io = filepart.getInputStream()) {
+            ByteArrayOutputStream buffers = new ByteArrayOutputStream();
+            byte[] buffer = new byte[(int) filepart.getSize()];
+            int read;
+            while ((read = io.read(buffer, 0, buffer.length)) != -1) {
+                buffers.write(buffer, 0, read);
+            }
+            file.setFilename(this.getFileName(filepart));
+            file.setData(buffers.toByteArray());
+            return file;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Upload fileTraitement(Collection<jakarta.servlet.http.Part> files, Field field) {
+        Upload file = new Upload();
+        String name = field.getName();
+        boolean exists = false;
+        String filename = null;
+        jakarta.servlet.http.Part filepart = null;
+        for (jakarta.servlet.http.Part part : files) {
+            if (part.getName().equals(name)) {
+                filepart = part;
+                break;
+            }
+        }
+        file = this.fillFileUpload(file, filepart);
+        return file;
     }
 }

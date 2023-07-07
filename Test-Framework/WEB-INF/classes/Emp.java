@@ -7,6 +7,17 @@ public class Emp {
 
     String nom;
     String prenom;
+    Upload file;
+
+    
+
+    public Upload getFile() {
+        return file;
+    }
+
+    public void setFile(Upload file) {
+        this.file = file;
+    }
 
     public String getNom() {
         return nom;
