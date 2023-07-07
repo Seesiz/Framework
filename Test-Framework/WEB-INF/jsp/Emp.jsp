@@ -6,7 +6,7 @@
     <title>Document</title>
 </head>
 <body>
-    <form action="Emp-Insert" method="get">
+    <form action="Emp-Update" method="get">
         Salama tompoko
         <input type="text" name="nom">
         <input type="text" name="prenom">

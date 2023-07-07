@@ -111,15 +111,15 @@ public class FrontServlet extends HttpServlet{
                         }
                     }
                 }
-                Parameter[] allParam = m.getParameters();
+                Parameter[] allParam = method.getParameters();
                 Object[] obj =new Object[allParam.length];
                 for (int i = 0; i < allParam.length; i++) {
                     Parameter p = allParam[i];
                     if(p.isAnnotationPresent(Param.class)){
                         Param param = p.getAnnotation(Param.class);
-                        for (String inparam : allparametre) {
+                        for (String inparam : allparametre) {   
                             if(param.key().equals(inparam)){
-                                String value = request.getParameter(inparam);
+                                String value = req.getParameter(inparam);
                                 Object valTemp = value;
                                 if(p.getType() == Integer.class){
                                     valTemp = Integer.parseInt(String.valueOf(value));
@@ -138,7 +138,7 @@ public class FrontServlet extends HttpServlet{
                         }
                     }
                 }
-                ModelView mv = (ModelView) method.invoke(ob);
+                ModelView mv = (ModelView) method.invoke(ob, obj);
                 for(Map.Entry<String, Object> entry : mv.getData().entrySet()){
                     req.setAttribute(entry.getKey(), entry.getValue());
                     System.out.println(entry.getKey()+":"+entry.getValue());

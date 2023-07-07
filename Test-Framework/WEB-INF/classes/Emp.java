@@ -39,4 +39,12 @@ public class Emp {
         mv.addItem("prenom", this.prenom);
         return mv;
     }
+
+    @Url(key="Emp-Update")
+    public ModelView Update(@Param(key="nom") String nom, @Param(key="prenom") String prenom){
+        ModelView mv=new ModelView("Affiche.jsp");
+        mv.addItem("nom", nom);
+        mv.addItem("prenom", prenom);
+        return mv;
+    }
 }
